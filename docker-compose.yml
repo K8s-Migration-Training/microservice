@@ -23,7 +23,6 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./eventservice/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
 
   ticketservice:
     build:
