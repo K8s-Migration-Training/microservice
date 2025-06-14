@@ -57,6 +57,7 @@ def list_events():
         print(f"Fehler beim Abrufen: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
+
+init_db()
 if __name__ == '__main__':
-    init_db()
     app.run(host='0.0.0.0', port=5000)
