@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  eventservice:
+    build:
+      context: ./eventservice
+    ports:
+      - "5000:5000"
+    environment:
+      POSTGRES_DB: eventsdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      DB_HOST: db
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: eventsdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./eventservice/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+
+  ticketservice:
+    build:
+      context: ./ticketservice
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
+
+volumes:
+  db_data:
