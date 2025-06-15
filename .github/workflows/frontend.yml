@@ -26,7 +26,7 @@ jobs:
       - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./ticketservice
-          file: ./ticketservice/Dockerfile
+          context: ./frontend
+          file: ./frontend/Dockerfile
           push: true
-          tags: ghcr.io/k8s-migration-training/ticketservice:latest
+          tags: ghcr.io/k8s-migration-training/frontend:latest

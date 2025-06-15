@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Events</title>
+  </head>
+  <body>
+    <h1>Eventliste</h1>
+    <ul id="event-list">
+      Lade...
+    </ul>
+
+    <script>
+      fetch("/api/")
+        .then((response) => response.json())
+        .then((data) => {
+          const list = document.getElementById("event-list");
+          list.innerHTML = "";
+          data.forEach((event) => {
+            const li = document.createElement("li");
+            li.textContent = event;
+            list.appendChild(li);
+          });
+        })
+        .catch((error) => {
+          document.getElementById("event-list").innerHTML = "Fehler beim Laden";
+          console.error("Fehler:", error);
+        });
+    </script>
+  </body>
+</html>
