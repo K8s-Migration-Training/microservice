@@ -1,7 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import psycopg2
 import os
 import time
+import requests
 
 app = Flask(__name__)
 
@@ -57,6 +58,15 @@ def list_events():
         print(f"Fehler beim Abrufen: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
+@app.route('/book_event', methods=['POST'])
+def book_event():
+    
+    response = requests.get('http://ticketservice:5000')
+    ticket_data = response.text
+
+    return jsonify({
+        "ticket": ticket_data
+    })
 
 init_db()
 if __name__ == '__main__':
