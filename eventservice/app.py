@@ -3,8 +3,13 @@ import psycopg2
 import os
 import time
 import requests
+import logging
 
 app = Flask(__name__)
+
+# Logging-Konfiguration
+logging.basicConfig(level=logging.DEBUG if os.getenv("FLASK_ENV") == "development" else logging.INFO)
+logger = logging.getLogger(__name__)
 
 DB_CONFIG = {
     "dbname": os.getenv("POSTGRES_DB", "eventsdb"),
@@ -15,8 +20,7 @@ DB_CONFIG = {
 }
 
 def get_db_connection():
-    conn = psycopg2.connect(**DB_CONFIG)
-    return conn
+    return psycopg2.connect(**DB_CONFIG)
 
 def init_db():
     try:
@@ -40,9 +44,9 @@ def init_db():
         conn.commit()
         cur.close()
         conn.close()
-        print("Datenbank initialisiert.")
+        logger.info("Datenbank initialisiert.")
     except Exception as e:
-        print(f"Fehler bei DB-Init: {e}")
+        logger.exception("Fehler bei der Initialisierung der Datenbank.")
 
 @app.route('/')
 def list_events():
@@ -55,19 +59,20 @@ def list_events():
         conn.close()
         return jsonify(events)
     except Exception as e:
-        print(f"Fehler beim Abrufen: {e}")
-        return jsonify({"error": "Internal Server Error"}), 500
+        logger.exception("Fehler beim Abrufen der Events.")
+        return jsonify({"error": "Fehler beim Abrufen der Events", "details": str(e)}), 500
 
 @app.route('/book_event', methods=['POST'])
 def book_event():
-    
-    response = requests.get('http://ticketservice:5000')
-    ticket_data = response.text
-
-    return jsonify({
-        "ticket": ticket_data
-    })
+    try:
+        response = requests.get('http://ticketservice:5000')
+        ticket_data = response.text
+        return jsonify({"ticket": ticket_data})
+    except Exception as e:
+        logger.exception("Fehler beim Buchen des Events.")
+        return jsonify({"error": "Fehler beim Buchen des Events", "details": str(e)}), 500
 
 init_db()
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
