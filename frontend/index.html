@@ -27,7 +27,7 @@
 
     <script>
       function buchen(eventName) {
-        fetch("/event/", {
+        fetch("/api/book_event", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -41,7 +41,7 @@
       }
 
       $(document).ready(function () {
-        $.getJSON("/api/", function (data) {
+        $.getJSON("/event/", function (data) {
           const tbody = $("#event-table-body");
           data.forEach((eventName, index) => {
             tbody.append(`
